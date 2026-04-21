@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace APBD_TASK6.Controllers
 {
@@ -14,5 +15,46 @@ namespace APBD_TASK6.Controllers
                 ?? throw new InvalidOperationException(
                     "Missing 'DefaultConnection' in appsettings.json.");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAppointments(
+        [FromQuery] string? status,
+        [FromQuery] string? patientLastName)
+        {
+            const string sql = """
+                SELECT
+                    a.IdAppointment,
+                    a.AppointmentDate,
+                    a.Status,
+                    a.Reason,
+                    p.FirstName + N' ' + p.LastName AS PatientFullName,
+                    p.Email AS PatientEmail
+                FROM dbo.Appointments a
+                JOIN dbo.Patients p ON p.IdPatient = a.IdPatient
+                WHERE (@Status IS NULL OR a.Status = @Status)
+                  AND (@PatientLastName IS NULL OR p.LastName = @PatientLastName)
+                ORDER BY a.AppointmentDate;
+
+                """;
+
+
+            await using var connection = new SqlConnection(_connectionString);
+            await using var co
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAppointment()
+        {
+
+        }
+
+
+
+
+
+
+
     }
 }
