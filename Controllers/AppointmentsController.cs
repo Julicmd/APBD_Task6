@@ -83,7 +83,6 @@ namespace APBD_TASK6.Controllers
                                    a.InternalNotes,
                                    p.FirstName + N' ' + p.LastName AS PatientFullName,
                                    p.Email AS PatientEmail,
-                                   p.Phone AS PatientPhone,
                                    d.FirstName + N' ' + d.LastName AS DoctorFullName,
                                    d.LicenseNumber,
                                    s.Name AS Specialization
@@ -91,13 +90,13 @@ namespace APBD_TASK6.Controllers
                                JOIN dbo.Patients p ON p.IdPatient = a.IdPatient
                                JOIN dbo.Doctors d ON d.IdDoctor = a.IdDoctor
                                JOIN dbo.Specializations s ON s.IdSpecialization = d.IdSpecialization
-                               WHERE a.IdAppoin = @Id;
+                               WHERE a.IdAppointment = @IdAppointment;
                                """;
             
             await using var connect = new SqlConnection( _connectionString);
             await using var command = new SqlCommand(sql, connect);
             
-            command.Parameters.Add("@IdAppointment",SqlDbType.Int).Value =  Id;
+            command.Parameters.Add("@IdAppointment", SqlDbType.Int).Value = Id;
         
             await connect.OpenAsync();
             
@@ -118,7 +117,6 @@ namespace APBD_TASK6.Controllers
                     : reader.GetString(reader.GetOrdinal("InternalNotes")),
                 PatientFullName = reader.GetString(reader.GetOrdinal("PatientFullName")),
                 PatientEmail = reader.GetString(reader.GetOrdinal("PatientEmail")),
-                PatientPhone = reader.GetString(reader.GetOrdinal("PatientPhone")),
                 DoctorFullName = reader.GetString(reader.GetOrdinal("DoctorFullName")),
                 LicenseNumber = reader.GetString(reader.GetOrdinal("LicenseNumber")),
                 Specialization = reader.GetString(reader.GetOrdinal("Specialization")),
